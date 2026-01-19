@@ -87,7 +87,8 @@ Si recibes `test.png`, ¡funciona! ✅
 
 | Problema | Solución |
 |----------|----------|
-| Build falla | Verifica que Dockerfile esté en la raíz |
+| Build falla: "npm ci requires package-lock.json" | `npm install && git add package-lock.json && git commit && git push` |
+| Build falla (otro) | Verifica que Dockerfile esté en la raíz |
 | Container reinicia | Aumenta RAM a 2GB |
 | 502 Error | Verifica PORT=3000 y HOST=0.0.0.0 |
 | Timeout | Aumenta PUPPETEER_TIMEOUT=60000 |

@@ -1,6 +1,7 @@
 # Dependencies
 node_modules/
-package-lock.json
+# IMPORTANTE: NO ignorar package-lock.json para despliegues (Docker, EasyPanel, etc.)
+# package-lock.json debe estar en el repositorio para npm ci
 
 # Environment
 .env

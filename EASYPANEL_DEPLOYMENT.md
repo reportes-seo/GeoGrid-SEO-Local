@@ -324,7 +324,30 @@ git push origin main
 
 ## 🐛 Troubleshooting
 
-### Error: "Build failed"
+### Error: "Build failed" - npm ci requires package-lock.json
+
+**Causa**: Falta el archivo `package-lock.json` en el repositorio
+
+**Solución**:
+```bash
+# 1. Generar package-lock.json (si no existe)
+npm install
+
+# 2. Verificar que .gitignore NO lo ignore
+# Debe COMENTAR esta línea en .gitignore:
+# package-lock.json
+
+# 3. Agregar al repositorio
+git add package-lock.json
+git commit -m "Add package-lock.json for Docker builds"
+git push
+
+# 4. Rebuild en EasyPanel
+```
+
+**⚠️ IMPORTANTE**: El `package-lock.json` es **necesario** para `npm ci` en Docker. No lo excluyas del repositorio.
+
+### Error: "Build failed" - Otros problemas
 
 **Causa**: Problemas en el Dockerfile o dependencias
 
@@ -332,6 +355,7 @@ git push origin main
 1. Verifica los logs de build en EasyPanel
 2. Asegúrate de que el Dockerfile esté en la raíz del repo
 3. Verifica que `package.json` tenga todas las dependencias
+4. Verifica que `package-lock.json` esté en el repo
 
 ### Error: "Container keeps restarting"
 
