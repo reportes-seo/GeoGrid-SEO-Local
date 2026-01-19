@@ -1,0 +1,49 @@
+# Node modules
+node_modules/
+npm-debug.log
+
+# Development files
+.env
+.env.local
+.env.development
+*.md
+!README.md
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test files
+test/
+tests/
+*.test.js
+*.spec.js
+
+# Documentation (excepto README)
+docs/
+FIXES.md
+LEGEND_FIX.md
+AUTHENTICATION.md
+CHANGELOG.md
+
+# Docker
+docker-compose.yml
+Dockerfile.dev
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/

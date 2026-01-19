@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  geogrid-server:
+    build: .
+    container_name: geogrid-server
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+      - PUPPETEER_HEADLESS=true
+      - PUPPETEER_TIMEOUT=30000
+      - RATE_LIMIT_WINDOW_MS=60000
+      - RATE_LIMIT_MAX_REQUESTS=100
+      - DEFAULT_GRID_SIZE=9
+      - DEFAULT_RADIUS_KM=4.0
+      - DEFAULT_MARKER_SIZE=28
+      - DEFAULT_BRAND_TEXT=EquipoSEO
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health/live', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
