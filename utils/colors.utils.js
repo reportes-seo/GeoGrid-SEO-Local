@@ -98,7 +98,7 @@ function getTextColor(position) {
  */
 function getDisplayText(position) {
   if (position === null || position === undefined) {
-    return '✗';
+    return 'X';
   }
 
   if (position >= 21) {

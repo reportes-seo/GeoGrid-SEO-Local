@@ -87,14 +87,27 @@ function getScripts(gridData, renderOptions) {
           );
         });
 
-        // Add center business marker
+        // Add center business marker (using CSS icon instead of emoji)
         const businessIconHtml = '<div class="custom-marker business-marker" style="' +
           'width: ${markerSize + 8}px; ' +
           'height: ${markerSize + 8}px; ' +
           'background-color: #e74c3c; ' +
-          'color: #ffffff; ' +
-          'line-height: ${markerSize + 8}px;' +
-          '">📍</div>';
+          'border: 3px solid #ffffff; ' +
+          'box-shadow: 0 2px 8px rgba(0,0,0,0.3); ' +
+          'position: relative;' +
+          '">' +
+          '<div style="' +
+            'position: absolute; ' +
+            'bottom: -8px; ' +
+            'left: 50%; ' +
+            'transform: translateX(-50%); ' +
+            'width: 0; ' +
+            'height: 0; ' +
+            'border-left: 8px solid transparent; ' +
+            'border-right: 8px solid transparent; ' +
+            'border-top: 12px solid #e74c3c;' +
+          '"></div>' +
+          '</div>';
 
         const businessIcon = L.divIcon({
           html: businessIconHtml,
