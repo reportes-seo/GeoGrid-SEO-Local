@@ -82,6 +82,17 @@ const gridConfigSchema = Joi.object({
     .messages({
       'array.base': 'Positions must be an array',
       'any.required': 'Positions array is required'
+    }),
+
+  centerPosition: Joi.number()
+    .integer()
+    .min(1)
+    .allow(null)
+    .optional()
+    .messages({
+      'number.base': 'Center position must be a number',
+      'number.integer': 'Center position must be an integer',
+      'number.min': 'Center position must be at least 1'
     })
 });
 

@@ -41,10 +41,20 @@ function generateGridData(gridConfig) {
   // Calculate metrics
   const metrics = calculateAllMetrics(positions);
 
+  // Find center point position (middle of the grid)
+  const halfGrid = Math.floor(gridSize / 2);
+  const centerIndex = halfGrid * gridSize + halfGrid;
+  const centerPoint = gridPoints.find(p => p.index === centerIndex);
+  const centerPosition = centerPoint ? centerPoint.position : null;
+  const centerDisplayText = centerPoint ? centerPoint.displayText : 'N/A';
+  const centerColor = centerPoint ? centerPoint.color : '#cccccc';
+  const centerTextColor = centerPoint ? centerPoint.textColor : '#000000';
+
   logger.debug('Grid data generated', {
     points: gridPoints.length,
     geoRank: metrics.geoRank,
-    coverage: metrics.coverage.percentage
+    coverage: metrics.coverage.percentage,
+    centerPosition: centerPosition
   });
 
   return {
@@ -52,7 +62,11 @@ function generateGridData(gridConfig) {
     metrics: metrics,
     center: {
       lat: centerLat,
-      lng: centerLng
+      lng: centerLng,
+      position: centerPosition,
+      displayText: centerDisplayText,
+      color: centerColor,
+      textColor: centerTextColor
     },
     bounds: calculateBounds(gridPoints),
     gridSize: gridSize,

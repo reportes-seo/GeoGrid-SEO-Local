@@ -7,6 +7,11 @@ function getScripts(gridData, renderOptions) {
   const { points, center, bounds } = gridData;
   const { markerSize } = renderOptions;
 
+  // Use center data from gridData (already calculated in grid.service.js)
+  const centerDisplayText = center.displayText || 'N/A';
+  const centerColor = center.color || '#e74c3c';
+  const centerTextColor = center.textColor || '#ffffff';
+
   return `
     // Wait for Leaflet to load
     window.addEventListener('DOMContentLoaded', function() {
@@ -87,25 +92,46 @@ function getScripts(gridData, renderOptions) {
           );
         });
 
-        // Add center business marker (using CSS icon instead of emoji)
+        // Add center business marker with position number and dynamic color
+        const centerPosText = '${centerDisplayText}';
+        const centerMarkerColor = '${centerColor}';
+        const centerMarkerTextColor = '${centerTextColor}';
         const businessIconHtml = '<div class="custom-marker business-marker" style="' +
           'width: ${markerSize + 8}px; ' +
           'height: ${markerSize + 8}px; ' +
-          'background-color: #e74c3c; ' +
+          'background-color: ' + centerMarkerColor + '; ' +
           'border: 3px solid #ffffff; ' +
           'box-shadow: 0 2px 8px rgba(0,0,0,0.3); ' +
-          'position: relative;' +
+          'position: relative; ' +
+          'display: flex; ' +
+          'align-items: center; ' +
+          'justify-content: center; ' +
+          'color: ' + centerMarkerTextColor + '; ' +
+          'font-weight: bold; ' +
+          'font-size: ${Math.floor(markerSize * 0.4)}px;' +
           '">' +
+          centerPosText +
           '<div style="' +
             'position: absolute; ' +
-            'bottom: -8px; ' +
+            'bottom: -11px; ' +
             'left: 50%; ' +
             'transform: translateX(-50%); ' +
             'width: 0; ' +
             'height: 0; ' +
             'border-left: 8px solid transparent; ' +
             'border-right: 8px solid transparent; ' +
-            'border-top: 12px solid #e74c3c;' +
+            'border-top: 12px solid ' + centerMarkerColor + ';' +
+          '"></div>' +
+          '<div style="' +
+            'position: absolute; ' +
+            'bottom: -14px; ' +
+            'left: 50%; ' +
+            'transform: translateX(-50%); ' +
+            'width: 0; ' +
+            'height: 0; ' +
+            'border-left: 11px solid transparent; ' +
+            'border-right: 11px solid transparent; ' +
+            'border-top: 15px solid #ffffff;' +
           '"></div>' +
           '</div>';
 
@@ -119,7 +145,7 @@ function getScripts(gridData, renderOptions) {
         L.marker([${center.lat}, ${center.lng}], {
           icon: businessIcon
         }).addTo(map)
-          .bindPopup('<strong>Ubicación del Negocio</strong>');
+          .bindPopup('<strong>Ubicación del Negocio</strong><br>Posición: ' + centerPosText);
 
         // Fit bounds to show all markers
         const markerBounds = L.latLngBounds(
