@@ -30,9 +30,10 @@ function getScripts(gridData, renderOptions) {
         let tilesLoaded = false;
         let tilesLoading = 0;
 
-        // Add OpenStreetMap tiles
-        const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors',
+        // Add CartoDB Voyager tiles (no Referer restriction, free, OSM-based)
+        const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+          attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: 'abcd',
           maxZoom: 19,
           minZoom: 1
         });
