@@ -239,11 +239,21 @@ demasiado corta.
    `window.GEOGRID_READY === true` (o `window.GEOGRID_ERROR`) con 15 s de timeout, y **luego
    duerme 2 s** para que terminen de pintar los tiles. Si tocas el template, mantén la señal
    `GEOGRID_READY`; sin ella la captura sale en blanco o a medias.
-3. **Tiles.** El proveedor se configura con `TILE_URL` / `TILE_ATTRIBUTION` /
-   `TILE_SUBDOMAINS`; el default es OpenStreetMap oficial. **CARTO gratuito ya no sirve**: desde
-   2026 estampa "API KEY REQUIRED" sobre cada tile, y esa marca de agua acababa impresa en los
-   informes de cliente. Al cambiar de proveedor, verifica el render de verdad (la imagen, no un
-   200 OK) y revisa la atribución legal.
+3. **Tiles — el punto más frágil del servicio.** Se configura con `TILE_URL` /
+   `TILE_ATTRIBUTION` / `TILE_SUBDOMAINS`. Estado de los proveedores (verificado 2026-09-11):
+
+   | Proveedor | Clave | Uso comercial | Qué pasa hoy |
+   |---|---|---|---|
+   | **CARTO con clave** | sí, gratis | **sí**, hasta 5M tiles/mes | **la opción recomendada** |
+   | CARTO sin clave | no | — | sirve el tile con "API KEY REQUIRED" **estampado dentro del PNG** |
+   | OpenStreetMap oficial | no | desaconsejado (servidores de voluntarios) | default actual: funciona, pero es un préstamo, no un servicio |
+   | Geoapify | sí, gratis | sí, ~12.000 tiles/día | alternativa válida |
+
+   Dos trampas aprendidas a base de golpes: **CARTO devuelve HTTP 200 con el aviso pintado en la
+   imagen** (no falla, así que ningún check de estado lo detecta), y **OSM devuelve una imagen de
+   "Access blocked" a los clientes que considera bots** (también con 200). Por eso, al tocar
+   tiles, la única verificación válida es **abrir el PNG del render y mirarlo**.
+   Los valores exactos para cada proveedor están listos para pegar en `.env.example`.
 4. **Browser singleton.** Un solo Chromium para todo el proceso, con reconexión (3 intentos) y
    limpieza periódica de páginas. No lances `puppeteer.launch()` fuera de `browser.service.js`:
    fugas de memoria garantizadas.
@@ -274,6 +284,9 @@ demasiado corta.
 Saneado el 2026-09-11 (detalle en `CHANGELOG.md` 1.2.0): tests, lint, dependencias, fuente única
 de tramos, versión del endpoint raíz, tiles y ficheros huérfanos. Lo que **sigue abierto**:
 
+- **Tiles sin clave propia.** El default (OSM) funciona pero depende de servidores de
+  voluntarios. Pendiente: crear la cuenta gratuita de CARTO y poner su `TILE_URL` en las
+  variables de entorno de EasyPanel (§10.3). No requiere tocar código ni redesplegar imagen.
 - **Rate limit in-memory**: no sobrevive a más de una réplica (§10.5).
 - **Sin tests de la capa HTTP ni de Puppeteer.** Los 65 tests cubren dominio, validación y
   autenticación; el render solo se verifica con el smoke test manual de §3.
