@@ -25,7 +25,8 @@ class BrowserService {
    * @returns {Promise<Browser>}
    */
   async getBrowser() {
-    if (this.browser && this.browser.isConnected()) {
+    // Puppeteer 25 sustituyo el metodo isConnected() por la propiedad connected
+    if (this.browser && this.browser.connected) {
       return this.browser;
     }
 
@@ -46,7 +47,7 @@ class BrowserService {
       return this.browser;
     } catch (error) {
       logger.error('Failed to create browser instance', { error: error.message });
-      throw new Error(`Browser creation failed: ${error.message}`);
+      throw new Error(`Browser creation failed: ${error.message}`, { cause: error });
     }
   }
 
@@ -90,7 +91,7 @@ class BrowserService {
       return page;
     } catch (error) {
       logger.error('Failed to create new page', { error: error.message });
-      throw new Error(`Page creation failed: ${error.message}`);
+      throw new Error(`Page creation failed: ${error.message}`, { cause: error });
     }
   }
 
@@ -99,7 +100,7 @@ class BrowserService {
    * @param {Page} page
    */
   async closePage(page) {
-    if (!page) return;
+    if (!page) {return;}
 
     try {
       this.pages.delete(page);
@@ -168,7 +169,7 @@ class BrowserService {
     const uptime = this.startTime ? Date.now() - this.startTime : 0;
 
     return {
-      isConnected: this.browser && this.browser.isConnected(),
+      isConnected: Boolean(this.browser && this.browser.connected),
       pages: this.pages.size,
       uptime: Math.floor(uptime / 1000),
       reconnectAttempts: this.reconnectAttempts
