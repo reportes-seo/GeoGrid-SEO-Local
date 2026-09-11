@@ -244,7 +244,7 @@ demasiado corta.
 
    | Proveedor | Clave | Uso comercial | Qué pasa hoy |
    |---|---|---|---|
-   | **CARTO con clave** | sí, gratis | **sí**, hasta 5M tiles/mes | **la opción recomendada** |
+   | **CARTO con clave** | gratis, por formulario | **sí**, hasta 5M tiles/mes | **la opción recomendada** |
    | CARTO sin clave | no | — | sirve el tile con "API KEY REQUIRED" **estampado dentro del PNG** |
    | OpenStreetMap oficial | no | desaconsejado (servidores de voluntarios) | default actual: funciona, pero es un préstamo, no un servicio |
    | Geoapify | sí, gratis | sí, ~12.000 tiles/día | alternativa válida |
@@ -254,6 +254,12 @@ demasiado corta.
    "Access blocked" a los clientes que considera bots** (también con 200). Por eso, al tocar
    tiles, la única verificación válida es **abrir el PNG del render y mirarlo**.
    Los valores exactos para cada proveedor están listos para pegar en `.env.example`.
+
+   **La clave de CARTO se pide en ** — es un formulario, sin cuenta
+   ni tarjeta, y llega por email al momento. No confundir con los precios de carto.com, que son
+   de su plataforma enterprise de Location Intelligence: otro producto. El límite gratuito (5M
+   tiles/mes) admite uso comercial; solo si se supera piden pasar a un acuerdo de pago, y a
+   ~50 tiles por informe eso son unos 100.000 informes al mes.
 4. **Browser singleton.** Un solo Chromium para todo el proceso, con reconexión (3 intentos) y
    limpieza periódica de páginas. No lances `puppeteer.launch()` fuera de `browser.service.js`:
    fugas de memoria garantizadas.
