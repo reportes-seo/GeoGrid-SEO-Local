@@ -74,6 +74,16 @@ curl -X POST http://localhost:3001/api/render -H "Content-Type: application/json
 Un 200 OK no basta: **abre la imagen**. Los fallos de este servicio (tiles en blanco, marca de
 agua, leyenda cortada) son visuales y pasan todos los checks de estado.
 
+**Atajo para eso** — `scripts/validar-render.sh` pide el render y guarda el PNG en `.dev/alex/`:
+
+```bash
+scripts/validar-render.sh                                        # demo 9x9, contra produccion
+scripts/validar-render.sh "podologo" "Clinica X" 40.41 -3.70 13 6  # negocio y rejilla concretos
+GEOGRID_URL=http://localhost:3001 scripts/validar-render.sh      # contra local
+```
+
+La clave la toma de `API_KEY` o del `.env`; nunca se escribe en el script.
+
 ---
 
 ## 4. Arquitectura
