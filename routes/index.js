@@ -7,6 +7,7 @@ const express = require('express');
 const router = express.Router();
 const healthRoutes = require('./health.routes');
 const renderRoutes = require('./render.routes');
+const { version, description } = require('../package.json');
 
 // Mount routes
 router.use('/health', healthRoutes);
@@ -16,8 +17,8 @@ router.use('/api', renderRoutes);
 router.get('/', (req, res) => {
   res.json({
     name: 'GeoGrid SEO Local Server',
-    version: '1.0.0',
-    description: 'Microservicio para generar informes visuales de posicionamiento SEO local',
+    version,
+    description,
     endpoints: {
       health: '/health',
       ready: '/health/ready',
