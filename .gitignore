@@ -46,3 +46,7 @@ build/
 
 # Claude Code working files
 .dev/
+.mcp.json
+.mcp.local.json
+*.mcp.json
+

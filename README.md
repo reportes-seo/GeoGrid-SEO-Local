@@ -102,7 +102,7 @@ node utils/generateApiKey.js 3
 ```env
 # .env
 API_KEY_ENABLED=true
-API_KEYS=equiposeo_b24046bf2f449b4fc492ce29aad1d8d35a6488e3f1f217de16bc21a97e880bd0
+API_KEYS=TU_API_KEY_AQUI
 ```
 
 ### Usar en Requests
@@ -278,7 +278,7 @@ curl -X POST http://localhost:3000/api/render \
 # Con autenticación (si API_KEY_ENABLED=true)
 curl -X POST http://localhost:3000/api/render \
   -H "Content-Type: application/json" \
-  -H "X-API-Key: equiposeo_b24046bf2f449b4fc492ce29aad1d8d35a6488e3f1f217de16bc21a97e880bd0" \
+  -H "X-API-Key: TU_API_KEY_AQUI" \
   -d '{
     "keyword": "comida para llevar",
     "business": "Restaurante El Buen Sabor",
@@ -311,7 +311,7 @@ async function generateReport() {
   }, {
     responseType: 'arraybuffer',
     headers: {
-      'X-API-Key': 'equiposeo_b24046bf2f449b4fc492ce29aad1d8d35a6488e3f1f217de16bc21a97e880bd0' // Si autenticación está habilitada
+      'X-API-Key': 'TU_API_KEY_AQUI' // Si autenticación está habilitada
     }
   });
 
@@ -330,7 +330,7 @@ import requests
 
 url = 'http://localhost:3000/api/render'
 headers = {
-    'X-API-Key': 'equiposeo_b24046bf2f449b4fc492ce29aad1d8d35a6488e3f1f217de16bc21a97e880bd0'  # Si autenticación está habilitada
+    'X-API-Key': 'TU_API_KEY_AQUI'  # Si autenticación está habilitada
 }
 data = {
     'keyword': 'comida para llevar',

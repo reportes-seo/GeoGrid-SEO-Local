@@ -52,14 +52,14 @@ node utils/generateApiKey.js 1 miempresa
 
 Generated API Key:
 
-  equiposeo_b24046bf2f449b4fc492ce29aad1d8d35a6488e3f1f217de16bc21a97e880bd0
+  TU_API_KEY_AQUI
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Add to your .env file:
 
   API_KEY_ENABLED=true
-  API_KEYS=equiposeo_b24046bf2f449b4fc492ce29aad1d8d35a6488e3f1f217de16bc21a97e880bd0
+  API_KEYS=TU_API_KEY_AQUI
 ```
 
 ### Método 2: Generación Manual
@@ -79,7 +79,7 @@ node -e "console.log('equiposeo_' + require('crypto').randomBytes(32).toString('
 ```env
 # Security (API Key Authentication)
 API_KEY_ENABLED=true
-API_KEYS=equiposeo_b24046bf2f449b4fc492ce29aad1d8d35a6488e3f1f217de16bc21a97e880bd0
+API_KEYS=TU_API_KEY_AQUI
 ```
 
 **Múltiples keys** (separadas por coma):
@@ -110,7 +110,7 @@ Con esto, los endpoints funcionarán sin requerir API key.
 
 ```bash
 curl -X POST http://localhost:3000/api/render \
-  -H "X-API-Key: equiposeo_b24046bf2f449b4fc492ce29aad1d8d35a6488e3f1f217de16bc21a97e880bd0" \
+  -H "X-API-Key: TU_API_KEY_AQUI" \
   -H "Content-Type: application/json" \
   -d @request.json \
   --output informe.png
@@ -120,7 +120,7 @@ curl -X POST http://localhost:3000/api/render \
 
 ```bash
 curl -X POST http://localhost:3000/api/render \
-  -H "Authorization: Bearer equiposeo_b24046bf2f449b4fc492ce29aad1d8d35a6488e3f1f217de16bc21a97e880bd0" \
+  -H "Authorization: Bearer TU_API_KEY_AQUI" \
   -H "Content-Type: application/json" \
   -d @request.json \
   --output informe.png
@@ -129,7 +129,7 @@ curl -X POST http://localhost:3000/api/render \
 ### Opción 3: Query Parameter
 
 ```bash
-curl -X POST "http://localhost:3000/api/render?api_key=equiposeo_b24046bf2f449b4fc492ce29aad1d8d35a6488e3f1f217de16bc21a97e880bd0" \
+curl -X POST "http://localhost:3000/api/render?api_key=TU_API_KEY_AQUI" \
   -H "Content-Type: application/json" \
   -d @request.json \
   --output informe.png
@@ -144,7 +144,7 @@ curl -X POST "http://localhost:3000/api/render?api_key=equiposeo_b24046bf2f449b4
 ```javascript
 const axios = require('axios');
 
-const API_KEY = 'equiposeo_b24046bf2f449b4fc492ce29aad1d8d35a6488e3f1f217de16bc21a97e880bd0';
+const API_KEY = 'TU_API_KEY_AQUI';
 
 // Opción 1: X-API-Key header
 const response = await axios.post('http://localhost:3000/api/render', {
@@ -170,7 +170,7 @@ fs.writeFileSync('informe.png', response.data);
 ```python
 import requests
 
-API_KEY = 'equiposeo_b24046bf2f449b4fc492ce29aad1d8d35a6488e3f1f217de16bc21a97e880bd0'
+API_KEY = 'TU_API_KEY_AQUI'
 
 # Opción 1: X-API-Key header
 headers = {
@@ -201,7 +201,7 @@ with open('informe.png', 'wb') as f:
 ```php
 <?php
 
-$apiKey = 'equiposeo_b24046bf2f449b4fc492ce29aad1d8d35a6488e3f1f217de16bc21a97e880bd0';
+$apiKey = 'TU_API_KEY_AQUI';
 
 $data = [
     'keyword' => 'pizza',

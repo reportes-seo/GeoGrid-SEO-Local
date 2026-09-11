@@ -31,7 +31,7 @@ Este proyecto es **100% compatible** con EasyPanel. La estructura incluye:
 node utils/generateApiKey.js 1 equiposeo
 
 # Ejemplo de output:
-# equiposeo_b24046bf2f449b4fc492ce29aad1d8d35a6488e3f1f217de16bc21a97e880bd0
+# TU_API_KEY_AQUI
 ```
 
 Guarda esta key, la necesitarás en el paso 3.
@@ -121,7 +121,7 @@ DEFAULT_QUALITY=90
 
 ```env
 API_KEY_ENABLED=true
-API_KEYS=equiposeo_b24046bf2f449b4fc492ce29aad1d8d35a6488e3f1f217de16bc21a97e880bd0
+API_KEYS=TU_API_KEY_AQUI
 ```
 
 **Importante**: Reemplaza la API key con la que generaste en el Paso 1.1
