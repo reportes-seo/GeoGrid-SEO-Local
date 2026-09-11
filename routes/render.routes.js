@@ -16,13 +16,17 @@ router.post('/render', validateApiKey, validateRenderRequest, asyncHandler(rende
 // POST /api/render/base64 - Render as base64 (PROTECTED)
 router.post('/render/base64', validateApiKey, validateRenderRequest, asyncHandler(renderController.renderBase64));
 
-// GET /api/preview - Preview HTML from query params
-router.get('/preview', validatePreviewQuery, asyncHandler(previewController.previewFromQuery));
+// Los preview tambien renderizan (generan el HTML del informe y, en el navegador,
+// cargan tiles): se protegen igual que /render. Desde el navegador se pasa la clave
+// con ?api_key=... , que validateApiKey acepta.
 
-// GET /api/preview/presets - List available presets
-router.get('/preview/presets', asyncHandler(previewController.listPresets));
+// GET /api/preview - Preview HTML from query params (PROTECTED)
+router.get('/preview', validateApiKey, validatePreviewQuery, asyncHandler(previewController.previewFromQuery));
 
-// GET /api/preview/:presetId - Preview from preset
-router.get('/preview/:presetId', asyncHandler(previewController.previewFromPreset));
+// GET /api/preview/presets - List available presets (PROTECTED)
+router.get('/preview/presets', validateApiKey, asyncHandler(previewController.listPresets));
+
+// GET /api/preview/:presetId - Preview from preset (PROTECTED)
+router.get('/preview/:presetId', validateApiKey, asyncHandler(previewController.previewFromPreset));
 
 module.exports = router;
