@@ -1,7 +1,17 @@
 /**
  * Metrics utility
  * Calculates SEO local ranking metrics
+ *
+ * Los tramos de posicion NO se definen aqui: se derivan de POSITION_RANGES
+ * (utils/colors.utils.js), que es la unica fuente de verdad del sistema.
  */
+
+const { POSITION_RANGES, NOT_FOUND_RANGE, isFoundPosition, getRange } = require('./colors.utils');
+
+/**
+ * Last position considered part of the Local Pack (Google's top 3 block)
+ */
+const LOCAL_PACK_MAX = POSITION_RANGES.find(range => range.key === 'localPack').max;
 
 /**
  * Calculate GeoRank - proprietary visibility metric
@@ -10,7 +20,7 @@
  * @returns {number} GeoRank value (0.00 - 1.00)
  */
 function calculateGeoRank(positions) {
-  const validPositions = positions.filter(p => p !== null && p !== undefined && typeof p === 'number');
+  const validPositions = positions.filter(isFoundPosition);
 
   if (validPositions.length === 0) {
     return 0.00;
@@ -29,7 +39,7 @@ function calculateGeoRank(positions) {
  * @returns {number|null} Average position or null if not found anywhere
  */
 function calculateAvgPosition(positions) {
-  const validPositions = positions.filter(p => p !== null && p !== undefined && typeof p === 'number');
+  const validPositions = positions.filter(isFoundPosition);
 
   if (validPositions.length === 0) {
     return null;
@@ -48,7 +58,13 @@ function calculateAvgPosition(positions) {
  * @returns {number} Percentage (0-100)
  */
 function calculateLocalPackPercentage(positions, totalPoints) {
-  const localPackPositions = positions.filter(p => p !== null && p >= 1 && p <= 3);
+  if (!totalPoints) {
+    return 0.00;
+  }
+
+  const localPackPositions = positions.filter(
+    p => isFoundPosition(p) && p >= 1 && p <= LOCAL_PACK_MAX
+  );
   const percentage = (localPackPositions.length / totalPoints) * 100;
 
   return parseFloat(percentage.toFixed(2));
@@ -61,8 +77,8 @@ function calculateLocalPackPercentage(positions, totalPoints) {
  * @returns {{found: number, total: number, percentage: number}}
  */
 function calculateCoverage(positions, totalPoints) {
-  const foundPositions = positions.filter(p => p !== null && p !== undefined && typeof p === 'number');
-  const percentage = (foundPositions.length / totalPoints) * 100;
+  const foundPositions = positions.filter(isFoundPosition);
+  const percentage = totalPoints ? (foundPositions.length / totalPoints) * 100 : 0;
 
   return {
     found: foundPositions.length,
@@ -77,32 +93,14 @@ function calculateCoverage(positions, totalPoints) {
  * @returns {Object} Distribution by range
  */
 function calculateDistribution(positions) {
-  const distribution = {
-    position1: 0,
-    localPack: 0,      // 2-3
-    top7: 0,           // 4-7
-    top10: 0,          // 8-10
-    page1: 0,          // 11-20
-    page2Plus: 0,      // 21+
-    notFound: 0
-  };
+  // Una clave por tramo definido en POSITION_RANGES, inicializadas a 0
+  const distribution = {};
+  [...POSITION_RANGES, NOT_FOUND_RANGE].forEach(range => {
+    distribution[range.key] = 0;
+  });
 
   positions.forEach(pos => {
-    if (pos === null || pos === undefined) {
-      distribution.notFound++;
-    } else if (pos === 1) {
-      distribution.position1++;
-    } else if (pos >= 2 && pos <= 3) {
-      distribution.localPack++;
-    } else if (pos >= 4 && pos <= 7) {
-      distribution.top7++;
-    } else if (pos >= 8 && pos <= 10) {
-      distribution.top10++;
-    } else if (pos >= 11 && pos <= 20) {
-      distribution.page1++;
-    } else if (pos >= 21) {
-      distribution.page2Plus++;
-    }
+    distribution[getRange(pos).key]++;
   });
 
   return distribution;

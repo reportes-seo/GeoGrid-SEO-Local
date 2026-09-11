@@ -1,27 +1,121 @@
 /**
  * Colors utility
  * Provides color mapping for position rankings
+ *
+ * POSITION_RANGES es la UNICA fuente de verdad de los tramos de posicion.
+ * Colores, leyenda y distribucion de metricas se derivan de aqui: cambiar un
+ * umbral en esta tabla lo cambia en todo el sistema.
  */
 
-const POSITION_COLORS = {
-  1: '#27ae60',        // Verde oscuro - posición 1
-  '2-3': '#2ecc71',    // Verde claro - Local Pack
-  '4-7': '#f1c40f',    // Amarillo
-  '8-10': '#e67e22',   // Naranja
-  '11-20': '#e74c3c',  // Rojo
-  '21+': '#c0392b',    // Rojo oscuro
-  null: '#95a5a6'      // Gris - no encontrado
+/**
+ * Position ranges, ordered from best to worst.
+ * @type {Array<{key: string, label: string, min: number, max: number, color: string, textColor: string, legend: string}>}
+ */
+const POSITION_RANGES = [
+  {
+    key: 'position1',
+    label: '1',
+    min: 1,
+    max: 1,
+    color: '#27ae60',        // Verde oscuro - posición 1
+    textColor: '#ffffff',
+    legend: 'Posición #1'
+  },
+  {
+    key: 'localPack',
+    label: '2-3',
+    min: 2,
+    max: 3,
+    color: '#2ecc71',        // Verde claro - Local Pack
+    textColor: '#ffffff',
+    legend: 'Local Pack (2-3)'
+  },
+  {
+    key: 'top7',
+    label: '4-7',
+    min: 4,
+    max: 7,
+    color: '#f1c40f',        // Amarillo
+    textColor: '#2c3e50',
+    legend: 'Top 7 (4-7)'
+  },
+  {
+    key: 'top10',
+    label: '8-10',
+    min: 8,
+    max: 10,
+    color: '#e67e22',        // Naranja
+    textColor: '#ffffff',
+    legend: 'Top 10 (8-10)'
+  },
+  {
+    key: 'page1',
+    label: '11-20',
+    min: 11,
+    max: 20,
+    color: '#e74c3c',        // Rojo
+    textColor: '#ffffff',
+    legend: 'Página 1 (11-20)'
+  },
+  {
+    key: 'page2Plus',
+    label: '21+',
+    min: 21,
+    max: Infinity,
+    color: '#c0392b',        // Rojo oscuro
+    textColor: '#ffffff',
+    legend: 'Página 2+ (21+)'
+  }
+];
+
+/**
+ * Range used when the business was not found at a grid point.
+ */
+const NOT_FOUND_RANGE = {
+  key: 'notFound',
+  label: 'null',
+  min: null,
+  max: null,
+  color: '#95a5a6',          // Gris - no encontrado
+  textColor: '#ffffff',
+  legend: 'No encontrado'
 };
 
-const TEXT_COLORS = {
-  1: '#ffffff',        // Blanco para verde oscuro
-  '2-3': '#ffffff',    // Blanco para verde claro
-  '4-7': '#2c3e50',    // Negro para amarillo
-  '8-10': '#ffffff',   // Blanco para naranja
-  '11-20': '#ffffff',  // Blanco para rojo
-  '21+': '#ffffff',    // Blanco para rojo oscuro
-  null: '#ffffff'      // Blanco para gris
-};
+/**
+ * Text shown inside a marker for positions at or beyond the last range.
+ */
+const OVERFLOW_TEXT = '21+';
+
+/**
+ * Text shown inside a marker when the business was not found.
+ */
+const NOT_FOUND_TEXT = 'X';
+
+/**
+ * Check whether a value is a usable ranking position
+ * @param {any} position - Value to check
+ * @returns {boolean}
+ */
+function isFoundPosition(position) {
+  return typeof position === 'number' && !isNaN(position);
+}
+
+/**
+ * Resolve the range a position belongs to
+ * @param {number|null} position - Ranking position
+ * @returns {Object} Matching range, or NOT_FOUND_RANGE
+ */
+function getRange(position) {
+  if (!isFoundPosition(position)) {
+    return NOT_FOUND_RANGE;
+  }
+
+  const match = POSITION_RANGES.find(
+    range => position >= range.min && position <= range.max
+  );
+
+  return match || NOT_FOUND_RANGE;
+}
 
 /**
  * Get color for a given position
@@ -29,32 +123,7 @@ const TEXT_COLORS = {
  * @returns {string} Hex color code
  */
 function getPositionColor(position) {
-  if (position === null || position === undefined) {
-    return POSITION_COLORS.null;
-  }
-
-  if (position === 1) {
-    return POSITION_COLORS[1];
-  }
-
-  if (position >= 2 && position <= 3) {
-    return POSITION_COLORS['2-3'];
-  }
-
-  if (position >= 4 && position <= 7) {
-    return POSITION_COLORS['4-7'];
-  }
-
-  if (position >= 8 && position <= 10) {
-    return POSITION_COLORS['8-10'];
-  }
-
-  if (position >= 11 && position <= 20) {
-    return POSITION_COLORS['11-20'];
-  }
-
-  // 21+
-  return POSITION_COLORS['21+'];
+  return getRange(position).color;
 }
 
 /**
@@ -63,32 +132,7 @@ function getPositionColor(position) {
  * @returns {string} Hex color code
  */
 function getTextColor(position) {
-  if (position === null || position === undefined) {
-    return TEXT_COLORS.null;
-  }
-
-  if (position === 1) {
-    return TEXT_COLORS[1];
-  }
-
-  if (position >= 2 && position <= 3) {
-    return TEXT_COLORS['2-3'];
-  }
-
-  if (position >= 4 && position <= 7) {
-    return TEXT_COLORS['4-7'];
-  }
-
-  if (position >= 8 && position <= 10) {
-    return TEXT_COLORS['8-10'];
-  }
-
-  if (position >= 11 && position <= 20) {
-    return TEXT_COLORS['11-20'];
-  }
-
-  // 21+
-  return TEXT_COLORS['21+'];
+  return getRange(position).textColor;
 }
 
 /**
@@ -97,12 +141,13 @@ function getTextColor(position) {
  * @returns {string} Display text
  */
 function getDisplayText(position) {
-  if (position === null || position === undefined) {
-    return 'X';
+  if (!isFoundPosition(position)) {
+    return NOT_FOUND_TEXT;
   }
 
-  if (position >= 21) {
-    return '21+';
+  const lastRange = POSITION_RANGES[POSITION_RANGES.length - 1];
+  if (position >= lastRange.min) {
+    return OVERFLOW_TEXT;
   }
 
   return position.toString();
@@ -113,31 +158,34 @@ function getDisplayText(position) {
  * @returns {Array<{range: string, color: string, label: string}>}
  */
 function getLegendItems() {
-  return [
-    { range: '1', color: POSITION_COLORS[1], label: 'Posición #1' },
-    { range: '2-3', color: POSITION_COLORS['2-3'], label: 'Local Pack (2-3)' },
-    { range: '4-7', color: POSITION_COLORS['4-7'], label: 'Top 7 (4-7)' },
-    { range: '8-10', color: POSITION_COLORS['8-10'], label: 'Top 10 (8-10)' },
-    { range: '11-20', color: POSITION_COLORS['11-20'], label: 'Página 1 (11-20)' },
-    { range: '21+', color: POSITION_COLORS['21+'], label: 'Página 2+ (21+)' },
-    { range: 'null', color: POSITION_COLORS.null, label: 'No encontrado' }
-  ];
+  return [...POSITION_RANGES, NOT_FOUND_RANGE].map(range => ({
+    range: range.label,
+    color: range.color,
+    label: range.legend
+  }));
 }
 
 /**
  * Get color scale for visualization
- * @returns {Object} Color scale object
+ * @returns {{colors: Object, textColors: Object}} Color scale keyed by range label
  */
 function getColorScale() {
-  return {
-    colors: POSITION_COLORS,
-    textColors: TEXT_COLORS
-  };
+  const colors = {};
+  const textColors = {};
+
+  [...POSITION_RANGES, NOT_FOUND_RANGE].forEach(range => {
+    colors[range.label] = range.color;
+    textColors[range.label] = range.textColor;
+  });
+
+  return { colors, textColors };
 }
 
 module.exports = {
-  POSITION_COLORS,
-  TEXT_COLORS,
+  POSITION_RANGES,
+  NOT_FOUND_RANGE,
+  isFoundPosition,
+  getRange,
   getPositionColor,
   getTextColor,
   getDisplayText,
