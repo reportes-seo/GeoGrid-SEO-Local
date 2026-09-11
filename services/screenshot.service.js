@@ -119,7 +119,7 @@ async function captureScreenshot(html, renderOptions) {
       error: error.message,
       elapsed: Date.now() - startTime
     });
-    throw new Error(`Screenshot capture failed: ${error.message}`);
+    throw new Error(`Screenshot capture failed: ${error.message}`, { cause: error });
   } finally {
     // Always close the page
     if (page) {

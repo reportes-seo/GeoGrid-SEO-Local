@@ -40,7 +40,7 @@ function generateReportHTML(gridConfig, renderOptions) {
     };
   } catch (error) {
     logger.error('Failed to generate report HTML', { error: error.message });
-    throw new Error(`HTML generation failed: ${error.message}`);
+    throw new Error(`HTML generation failed: ${error.message}`, { cause: error });
   }
 }
 

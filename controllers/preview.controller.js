@@ -35,11 +35,11 @@ const PRESETS = {
     centerLng: -0.1278,
     gridSize: 11,
     radiusKm: 6,
-    positions: Array(121).fill(null).map((_, i) => {
+    positions: Array(121).fill(null).map(() => {
       const rand = Math.random();
-      if (rand < 0.1) return null;
-      if (rand < 0.3) return Math.floor(Math.random() * 3) + 1;
-      if (rand < 0.6) return Math.floor(Math.random() * 7) + 4;
+      if (rand < 0.1) {return null;}
+      if (rand < 0.3) {return Math.floor(Math.random() * 3) + 1;}
+      if (rand < 0.6) {return Math.floor(Math.random() * 7) + 4;}
       return Math.floor(Math.random() * 10) + 11;
     })
   }

@@ -96,7 +96,7 @@ function validatePreviewQuery(req, res, next) {
       if (!Array.isArray(parsedPositions)) {
         throw new Error('Positions must be an array');
       }
-    } catch (error) {
+    } catch {
       throw new ValidationError('Invalid positions array', [
         { field: 'positions', message: 'Must be a valid JSON array' }
       ]);

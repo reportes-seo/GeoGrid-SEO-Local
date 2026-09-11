@@ -5,7 +5,7 @@
 
 const { escapeHtml } = require('../../utils/escapeHtml.utils');
 const { getLegendItems } = require('../../utils/colors.utils');
-const { formatMetric, getMetricLabel } = require('../../utils/metrics.utils');
+const { formatMetric } = require('../../utils/metrics.utils');
 const { getStyles } = require('./styles.template');
 const { getScripts } = require('./scripts.template');
 

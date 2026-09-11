@@ -37,8 +37,12 @@ const ERROR_CODES = {
 
 /**
  * Global error handler middleware
+ *
+ * Los 4 argumentos son OBLIGATORIOS: Express reconoce un error handler por su
+ * aridad. Quitar `_next` lo degradaria a middleware normal y los errores
+ * dejarian de capturarse.
  */
-function errorHandler(err, req, res, next) {
+function errorHandler(err, req, res, _next) {
   // Log error
   logger.error('Request error', {
     name: err.name,

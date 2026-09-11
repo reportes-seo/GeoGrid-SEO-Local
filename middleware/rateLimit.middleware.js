@@ -96,16 +96,21 @@ function rateLimitMiddleware(req, res, next) {
   const identifier = req.ip || req.connection.remoteAddress || 'unknown';
 
   if (!rateLimiter.isAllowed(identifier)) {
-    const remaining = rateLimiter.getRemaining(identifier);
+    const retryAfterSeconds = Math.ceil(envConfig.rateLimit.windowMs / 1000);
 
     logger.warn('Rate limit exceeded', { identifier });
+
+    // Cabeceras estandar para que el cliente sepa cuanto esperar
+    res.setHeader('Retry-After', retryAfterSeconds);
+    res.setHeader('X-RateLimit-Limit', envConfig.rateLimit.maxRequests);
+    res.setHeader('X-RateLimit-Remaining', rateLimiter.getRemaining(identifier));
 
     return res.status(429).json({
       success: false,
       error: {
         code: 'RATE_LIMIT_EXCEEDED',
         message: 'Too many requests, please try again later',
-        retryAfter: Math.ceil(envConfig.rateLimit.windowMs / 1000)
+        retryAfter: retryAfterSeconds
       }
     });
   }
