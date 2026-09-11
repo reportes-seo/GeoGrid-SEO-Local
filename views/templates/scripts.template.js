@@ -3,9 +3,12 @@
  * JavaScript for the interactive map
  */
 
+const envConfig = require('../../config/env.config');
+
 function getScripts(gridData, renderOptions) {
   const { points, center, bounds } = gridData;
   const { markerSize } = renderOptions;
+  const tiles = envConfig.tiles;
 
   // Use center data from gridData (already calculated in grid.service.js)
   const centerDisplayText = center.displayText || 'N/A';
@@ -30,10 +33,10 @@ function getScripts(gridData, renderOptions) {
         let tilesLoaded = false;
         let tilesLoading = 0;
 
-        // Add CartoDB Voyager tiles (no Referer restriction, free, OSM-based)
-        const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-          attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
-          subdomains: 'abcd',
+        // Tiles del proveedor configurado (config/env.config.js -> TILE_URL)
+        const tileLayer = L.tileLayer(${JSON.stringify(tiles.url)}, {
+          attribution: ${JSON.stringify(tiles.attribution)},
+          subdomains: ${JSON.stringify(tiles.subdomains)},
           maxZoom: 19,
           minZoom: 1
         });

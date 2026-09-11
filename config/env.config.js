@@ -18,6 +18,20 @@ const config = {
     timeout: parseInt(process.env.PUPPETEER_TIMEOUT, 10) || 30000
   },
 
+  // Tiles del mapa (proveedor configurable: cambiarlo NO exige tocar codigo)
+  //
+  // Default: OpenStreetMap oficial, sin API key. CARTO se descarto como default
+  // porque desde 2026 estampa "API KEY REQUIRED" sobre los tiles gratuitos, y esa
+  // marca de agua acababa dentro de los informes de cliente.
+  // Para usar un proveedor de pago basta con definir TILE_URL y TILE_ATTRIBUTION.
+  tiles: {
+    url: process.env.TILE_URL || 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution:
+      process.env.TILE_ATTRIBUTION ||
+      '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    subdomains: process.env.TILE_SUBDOMAINS || 'abc'
+  },
+
   // Rate Limiting
   rateLimit: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 60000,
