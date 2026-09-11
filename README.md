@@ -15,7 +15,7 @@ Microservicio para generar informes visuales de posicionamiento SEO local en for
 
 ## 🚀 Stack Tecnológico
 
-- Node.js 18+
+- Node.js 22.12+ (requerido por Puppeteer 25)
 - Express.js
 - Puppeteer (headless browser)
 - Leaflet.js + OpenStreetMap

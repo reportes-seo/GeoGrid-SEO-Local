@@ -1,25 +1,24 @@
 # Base image
-FROM node:18-slim
+#
+# Node 22 LTS es OBLIGATORIO, no una preferencia: Puppeteer 25 es ESM puro
+# ("type": "module") y declara engines >=22.12.0. Este proyecto es CommonJS, asi
+# que depende de require(esm), que Node habilito por defecto en la 22.12.
+# Con node:18 el arranque muere con ERR_REQUIRE_ESM al cargar puppeteer.
+# Node 18 esta ademas fuera de soporte desde 2025.
+#
+# La etiqueta fija bookworm a proposito: en trixie varios paquetes de abajo
+# cambiaron de nombre (libasound2 -> libasound2t64) y el build romperia.
+FROM node:22-bookworm-slim
 
-# Install Chromium and dependencies
-RUN apt-get update && apt-get install -y \
+# Chromium y lo minimo para renderizar texto.
+# El paquete chromium de Debian ya arrastra sus propias librerias (nss, atk,
+# cups, x11...), asi que no se listan una a una: esa lista se rompia en cada
+# cambio de release de Debian.
+RUN apt-get update && apt-get install -y --no-install-recommends \
     chromium \
     fonts-liberation \
-    libappindicator3-1 \
-    libasound2 \
-    libatk-bridge2.0-0 \
-    libatk1.0-0 \
-    libcups2 \
-    libdbus-1-3 \
-    libgdk-pixbuf2.0-0 \
-    libnspr4 \
-    libnss3 \
-    libx11-xcb1 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxrandr2 \
-    xdg-utils \
-    --no-install-recommends \
+    fonts-dejavu-core \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Set Puppeteer environment variables

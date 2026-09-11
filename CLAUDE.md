@@ -18,7 +18,7 @@ posición de ese negocio en Google para una keyword en ese punto concreto.
   que lo llama. Es un **renderizador**, no un rank tracker. Confundir esto es el error de
   concepto más caro del proyecto.
 
-**Versión:** 1.2.0 · **Licencia:** ISC · **Módulos:** CommonJS · **Node:** >= 18
+**Versión:** 1.2.0 · **Licencia:** ISC · **Módulos:** CommonJS · **Node:** >= 22.12 (§10.4)
 
 ---
 
@@ -26,13 +26,13 @@ posición de ese negocio en Google para una keyword en ese punto concreto.
 
 | Capa | Tecnología |
 |------|-----------|
-| Runtime | Node.js 18+ (CommonJS, `type: commonjs`) |
+| Runtime | **Node.js 22.12+** (CommonJS, `type: commonjs`) — ver §10.4 |
 | HTTP | Express 5 |
 | Validación | Joi 18 |
 | Render | Puppeteer 25 (Chromium headless) |
 | Mapa | Leaflet.js + tiles **OpenStreetMap** (configurable por `TILE_URL`) |
 | Seguridad | helmet, cors, rate limit propio in-memory, API Key propia |
-| Despliegue | Docker (`node:18-slim` + chromium del sistema) → EasyPanel |
+| Despliegue | Docker (`node:22-bookworm-slim` + chromium del sistema) → EasyPanel |
 
 ---
 
@@ -266,26 +266,38 @@ demasiado corta.
    tiles/mes) admite uso comercial; solo si se supera piden pasar a un acuerdo de pago, y a
    ~50 tiles por informe eso son unos 100.000 informes al mes.
 
-4. **Browser singleton.** Un solo Chromium para todo el proceso, con reconexión (3 intentos) y
+4. **Node 22.12+ es un requisito duro, no una preferencia.** Puppeteer 25 es ESM puro
+   (`"type": "module"`) y declara `engines: >=22.12.0`. Este proyecto es CommonJS, así que
+   depende de `require(esm)`, que Node habilitó por defecto en la **22.12**. Con Node 18 el
+   proceso ni arranca: muere en `require('puppeteer')` con `ERR_REQUIRE_ESM`. Nunca bajes la
+   imagen base del Dockerfile por debajo de esa versión — y ojo, el fallo es de **arranque**,
+   así que no lo verás hasta que el contenedor esté desplegado.
+
+   La etiqueta es `node:22-bookworm-slim` y el `bookworm` es deliberado: en trixie hay paquetes
+   de Debian que cambiaron de nombre (`libasound2` → `libasound2t64`). Las librerías de Chromium
+   ya no se listan una a una en el Dockerfile: las arrastra el propio paquete `chromium`, y esa
+   lista manual se rompía en cada cambio de release.
+
+5. **Browser singleton.** Un solo Chromium para todo el proceso, con reconexión (3 intentos) y
    limpieza periódica de páginas. No lances `puppeteer.launch()` fuera de `browser.service.js`:
    fugas de memoria garantizadas.
-5. **Rate limit in-memory.** Vive en el proceso. Con más de una réplica, el límite real se
+6. **Rate limit in-memory.** Vive en el proceso. Con más de una réplica, el límite real se
    multiplica por el número de instancias. Si se escala en horizontal hace falta backend externo.
-6. **CORS en producción es `origin: false`** (`config/app.config.js`) — es decir, bloqueado
+7. **CORS en producción es `origin: false`** (`config/app.config.js`) — es decir, bloqueado
    desde navegador. El servicio está pensado para llamadas servidor-a-servidor. Si algún día se
    llama desde un front, hay que abrir un origen explícito, nunca `*`.
-7. **CSP desactivada** en helmet, a propósito, porque el HTML del preview carga Leaflet y tiles
+8. **CSP desactivada** en helmet, a propósito, porque el HTML del preview carga Leaflet y tiles
    por CDN. Tenerlo presente al auditar seguridad.
-8. **`API_KEY_ENABLED=false` desactiva la auth de golpe**, en render y preview. Es cómodo en
+9. **`API_KEY_ENABLED=false` desactiva la auth de golpe**, en render y preview. Es cómodo en
    local y un agujero en producción: verifica el valor real del entorno desplegado, no el del
    `.env.example`.
-9. **Puppeteer mayor = revisar la API del browser.** La v25 eliminó `browser.isConnected()`
+10. **Puppeteer mayor = revisar la API del browser.** La v25 eliminó `browser.isConnected()`
    en favor de la propiedad `browser.connected`; el servidor arrancaba igual y solo reventaba al
    renderizar. Tras cada salto mayor, smoke test de render obligatorio.
-10. **ESLint usa flat config** (`eslint.config.js`) y el formato lo lleva Prettier: no
+11. **ESLint usa flat config** (`eslint.config.js`) y el formato lo lleva Prettier: no
     reintroduzcas reglas de estilo (`indent`, `quotes`, `semi`) — están deprecadas en el core de
     ESLint y chocan con `.prettierrc`.
-11. **El JS que corre dentro del navegador** (plantillas y callbacks de `page.evaluate`) tiene su
+12. **El JS que corre dentro del navegador** (plantillas y callbacks de `page.evaluate`) tiene su
     propia entrada en `eslint.config.js` con globals de browser. Si mueves ese código, mueve
     también la entrada o ESLint marcará `window`/`document` como indefinidos.
 
@@ -299,7 +311,7 @@ de tramos, versión del endpoint raíz, tiles y ficheros huérfanos. Lo que **si
 - **Tiles sin clave propia.** El default (OSM) funciona pero depende de servidores de
   voluntarios. Pendiente: crear la cuenta gratuita de CARTO y poner su `TILE_URL` en las
   variables de entorno de EasyPanel (§10.3). No requiere tocar código ni redesplegar imagen.
-- **Rate limit in-memory**: no sobrevive a más de una réplica (§10.5).
+- **Rate limit in-memory**: no sobrevive a más de una réplica (§10.6).
 - **Sin tests de la capa HTTP ni de Puppeteer.** Los 65 tests cubren dominio, validación y
   autenticación; el render solo se verifica con el smoke test manual de §3.
 - **Documentación dispersa en la raíz**: `README.md`, `API.md`, `AUTHENTICATION.md`,
