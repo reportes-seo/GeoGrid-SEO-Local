@@ -10,14 +10,24 @@ Los siguientes endpoints **requieren autenticación**:
 
 - ✅ `POST /api/render` - Renderizar imagen
 - ✅ `POST /api/render/base64` - Renderizar base64
+- ✅ `GET /api/preview` - Preview HTML desde query params
+- ✅ `GET /api/preview/presets` - Listado de presets
+- ✅ `GET /api/preview/:presetId` - Preview de un preset
+
+> **Desde v1.2.0 los preview también están protegidos.** Antes eran públicos, y eso
+> dejaba abierta la parte cara del servicio: cada preview genera el informe y arranca
+> un render en el navegador. Para abrir un preview desde el navegador, pasa la clave
+> como query param: `/api/preview/demo?api_key=TU_CLAVE`.
 
 Los siguientes endpoints **NO requieren autenticación** (públicos):
 
 - ⭕ `GET /health` - Health check
 - ⭕ `GET /health/ready` - Readiness probe
 - ⭕ `GET /health/live` - Liveness probe
-- ⭕ `GET /api/preview/*` - Preview HTML (solo para desarrollo/debug)
 - ⭕ `GET /` - Info del servicio
+
+Los tres primeros son las probes de Docker/EasyPanel: protegerlos rompería el
+healthcheck del contenedor.
 
 ## 🔑 Generar API Keys
 

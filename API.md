@@ -8,7 +8,17 @@ http://localhost:3000
 
 ## Authentication
 
-No authentication required (stateless service).
+Los endpoints de `/api/*` (render y preview) requieren **API Key** cuando
+`API_KEY_ENABLED=true`. Tres formas de enviarla, equivalentes:
+
+```
+X-API-Key: TU_CLAVE
+Authorization: Bearer TU_CLAVE
+?api_key=TU_CLAVE
+```
+
+Sin clave válida devuelven `401` con `error.code = AUTHENTICATION_REQUIRED`.
+`GET /health*` y `GET /` son públicos. Detalle completo en `AUTHENTICATION.md`.
 
 ## Rate Limiting
 

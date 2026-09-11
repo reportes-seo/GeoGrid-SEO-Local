@@ -5,6 +5,46 @@ All notable changes to GeoGrid Server will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-09-11
+
+### Security
+- **Los endpoints de preview ahora exigen API Key** (`GET /api/preview`,
+  `/api/preview/presets`, `/api/preview/:presetId`). Antes eran publicos y dejaban
+  abierta la parte cara del servicio: cada preview genera el informe y arranca un
+  render. Desde el navegador, pasar la clave como `?api_key=...`.
+  `GET /` y `/health*` siguen publicos (son las probes del contenedor).
+
+### Added
+- Suite de tests con el runner nativo de Node (`npm test`), sin dependencias nuevas:
+  65 tests sobre colores, metricas, coordenadas, validacion, grid.service y autenticacion
+- Proveedor de tiles configurable por entorno: `TILE_URL`, `TILE_ATTRIBUTION`, `TILE_SUBDOMAINS`
+- Cabeceras `Retry-After` y `X-RateLimit-*` tambien en las respuestas 429
+
+### Fixed
+- Tiles del mapa estampados con la marca de agua "API KEY REQUIRED": CARTO dejo de
+  servir tiles gratuitos sin clave. Default cambiado a OpenStreetMap oficial
+- `npm run lint` estaba roto desde ESLint 9 (config legacy `.eslintrc.js`):
+  migrado a flat config (`eslint.config.js`)
+- `browser.isConnected()` no existe en Puppeteer 25 -> `browser.connected`
+- El endpoint raiz `/` anunciaba la version 1.0.0 cableada; ahora se lee de package.json
+- `escapeHtml`: `hasOwnProperty` accedido desde el objeto destino (fallaba con objetos sin prototipo)
+- Division por cero en metricas con una rejilla vacia
+- Los errores reenvueltos ya adjuntan `cause`, preservando el stack original
+
+### Changed
+- `POSITION_RANGES` (utils/colors.utils.js) es ahora la UNICA fuente de verdad de los
+  tramos de posicion: colores, leyenda y distribucion de metricas se derivan de ahi.
+  Antes los umbrales estaban duplicados en tres sitios
+- Dependencias actualizadas; `npm audit` pasa de 18 vulnerabilidades (1 critica, 12 altas) a 0:
+  puppeteer 24.35 -> 25.10, dotenv 16 -> 17, eslint 9 -> 10, joi/helmet/cors/compression al dia
+- `getColorScale()` devuelve las claves por etiqueta de tramo ('1', '2-3', ...);
+  `POSITION_COLORS`/`TEXT_COLORS` dejan de exportarse (no tenian consumidores)
+
+### Removed
+- `FIXES.md` y `LEGEND_FIX.md`: su contenido ya estaba en este CHANGELOG y habia quedado
+  desactualizado. Los gotchas vigentes viven en CLAUDE.md
+- Carpeta huerfana `viewstemplates/` (vacia; las plantillas estan en `views/templates/`)
+
 ## [1.1.0] - 2026-01-19
 
 ### Added

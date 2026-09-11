@@ -29,12 +29,12 @@ tests/
 *.test.js
 *.spec.js
 
-# Documentation (excepto README)
+# Documentation (el resto de .md ya se excluye arriba, salvo README)
 docs/
-FIXES.md
-LEGEND_FIX.md
-AUTHENTICATION.md
-CHANGELOG.md
+
+# Claude Code working files
+.dev/
+.claude/
 
 # Docker
 docker-compose.yml

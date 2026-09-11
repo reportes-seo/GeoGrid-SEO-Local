@@ -43,3 +43,6 @@ build/
 
 # Puppeteer
 .local-chromium/
+
+# Claude Code working files
+.dev/
