@@ -206,8 +206,8 @@ Claves que importan: `PORT`, `HOST`, `NODE_ENV`, `LOG_LEVEL`,
 `PUPPETEER_TIMEOUT`, `RATE_LIMIT_WINDOW_MS`, `RATE_LIMIT_MAX_REQUESTS`,
 `DEFAULT_GRID_SIZE|RADIUS_KM|MARKER_SIZE|BRAND_TEXT`,
 `DEFAULT_WIDTH|HEIGHT|FORMAT|QUALITY`, `API_KEY_ENABLED`, `API_KEYS` (separadas por comas,
-**mínimo 32 caracteres cada una**), y `TILE_URL` / `TILE_ATTRIBUTION` / `TILE_SUBDOMAINS` para
-el proveedor de tiles (§10.3).
+**mínimo 32 caracteres cada una**) y `TILE_API_KEY` para los tiles (§10.3; la URL y la
+atribución salen solas del código, no se configuran).
 
 Reglas que abortan el arranque: puerto fuera de 1–65535 · `DEFAULT_GRID_SIZE` fuera de 3–15 ·
 `DEFAULT_RADIUS_KM` fuera de 0.5–20 · `API_KEY_ENABLED=true` sin claves o con alguna clave
@@ -253,7 +253,12 @@ demasiado corta.
    imagen** (no falla, así que ningún check de estado lo detecta), y **OSM devuelve una imagen de
    "Access blocked" a los clientes que considera bots** (también con 200). Por eso, al tocar
    tiles, la única verificación válida es **abrir el PNG del render y mirarlo**.
-   Los valores exactos para cada proveedor están listos para pegar en `.env.example`.
+   **En el entorno solo se pone la clave** (`TILE_API_KEY`). La URL del proveedor y la
+   atribución legal viven en el código (`utils/tiles.utils.js`): con clave se construye CARTO
+   Voyager, sin clave se cae a OpenStreetMap, y la atribución se deduce del dominio resultante.
+   Si el proveedor no se reconoce, cae en la de OpenStreetMap — nunca en vacío, porque es
+   condición de licencia. `TILE_URL` (plantilla completa) y `TILE_ATTRIBUTION` siguen existiendo
+   como escape para un proveedor distinto, y tienen prioridad si se definen.
 
    **La clave de CARTO se pide en `carto.com/basemaps/apikey`** — es un formulario, sin cuenta
    ni tarjeta, y llega por email al momento. No confundir con los precios de carto.com, que son

@@ -3,7 +3,15 @@
  * Validates and provides environment variables with defaults
  */
 
-require('dotenv').config();
+// quiet: dotenv 17 imprime un banner promocional al cargar; fuera de los logs.
+require('dotenv').config({ quiet: true });
+
+const { buildTileUrl, getAttributionFor } = require('../utils/tiles.utils');
+
+// Lo unico que se configura por entorno es la CLAVE. La URL completa (con sus
+// {z}/{x}/{y}) la construye el codigo, y la atribucion legal se deduce de ella.
+// TILE_URL sigue soportada como escape para un proveedor distinto de CARTO.
+const tileUrl = process.env.TILE_URL || buildTileUrl(process.env.TILE_API_KEY);
 
 const config = {
   // Server
@@ -25,10 +33,11 @@ const config = {
   // marca de agua acababa dentro de los informes de cliente.
   // Para usar un proveedor de pago basta con definir TILE_URL y TILE_ATTRIBUTION.
   tiles: {
-    url: process.env.TILE_URL || 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-    attribution:
-      process.env.TILE_ATTRIBUTION ||
-      '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    url: tileUrl,
+    // La atribucion es HTML y obligatoria por licencia, pero no se pide por entorno:
+    // se deduce del proveedor que aparezca en TILE_URL (utils/tiles.utils.js).
+    // TILE_ATTRIBUTION queda como escape para un proveedor no reconocido.
+    attribution: process.env.TILE_ATTRIBUTION || getAttributionFor(tileUrl),
     subdomains: process.env.TILE_SUBDOMAINS || 'abc'
   },
 
